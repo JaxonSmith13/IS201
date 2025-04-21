@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>What Are The Odds?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* Pure CSS Starfield */
+    .stars, .stars2, .stars3 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 2px;
+      background: white;
+      box-shadow: 
+        50px 50px white, 100px 150px white, 200px 100px white,
+        300px 200px white, 400px 50px white, 500px 250px white,
+        600px 80px white, 700px 180px white, 800px 120px white,
+        900px 60px white, 1000px 220px white;
+      animation: starMove 20s linear infinite;
+      z-index: 0;
+    }
+
+    .stars2 {
+      box-shadow: 
+        70px 40px white, 120px 170px white, 240px 130px white,
+        320px 210px white, 420px 90px white, 520px 270px white,
+        640px 100px white, 740px 160px white, 840px 110px white,
+        940px 70px white, 1040px 230px white;
+      animation: starMove 40s linear infinite;
+      opacity: 0.5;
+    }
+
+    .stars3 {
+      box-shadow: 
+        60px 30px white, 110px 140px white, 230px 110px white,
+        310px 190px white, 410px 70px white, 510px 260px white,
+        630px 90px white, 730px 150px white, 830px 100px white,
+        930px 50px white, 1030px 210px white;
+      animation: starMove 60s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes starMove {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .container {
+      z-index: 2;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
+    }
+
+    .question-input {
+      padding: 12px;
+      width: 300px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1.1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      outline: none;
+      text-align: center;
+      margin-top: 15px;
+      box-shadow: 0 0 10px #00ffff;
+    }
+
+    .ask-button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      border-radius: 8px;
+      background-color: #00ffff;
+      color: black;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      box-shadow: 0 0 10px #00ffff;
+    }
+
+    .ask-button:hover {
+      transform: scale(1.1);
+      background-color: #00ccff;
+    }
+
+    .ask-button:disabled {
+      background-color: #444;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #aaa;
+    }
+
+    .countdown {
+      font-size: 3rem;
+      color: #ffea00;
+      font-weight: bold;
+      margin-top: 40px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-shadow: 0 0 8px #ffea00;
+    }
+
+    .odds-display {
+      font-size: 5rem;
+      margin-top: 20px;
+      color: #ffffff;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+    }
+  </style>
+</head>
+<body>
+<a href="index.html">Home</a>
+  <!-- CSS Stars -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+
+  <div class="container">
+    <h1>What Are The Odds?</h1>
+    <input type="text" id="question" class="question-input" placeholder="What are the odds that...">
+    <br>
+    <button class="ask-button" id="ask-btn" onclick="askQuestion()">Ask</button>
+    <div id="countdown" class="countdown">5</div>
+    <div id="odds" class="odds-display">?</div>
+  </div>
+
+  <!-- Background Music -->
+  <audio id="background-music" loop autoplay>
+    <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const audioBeep = new Audio('https://www.soundjay.com/button/beep-07.wav');
+    const audioReveal = new Audio('https://www.soundjay.com/button/boing-02.wav');
+    let countdownInterval;
+
+    function askQuestion() {
+      const question = document.getElementById("question").value;
+      if (!question.trim()) {
+        alert("Please ask a question first!");
+        return;
+      }
+
+      document.getElementById("ask-btn").disabled = true;
+
+      const countdownEl = document.getElementById("countdown");
+      const oddsEl = document.getElementById("odds");
+      countdownEl.style.opacity = 1;
+      oddsEl.style.opacity = 0;
+      let countdown = 5;
+      countdownEl.textContent = countdown;
+      audioBeep.play();
+
+      countdownInterval = setInterval(() => {
+        countdown--;
+        countdownEl.textContent = countdown;
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          countdownEl.style.opacity = 0;
+          revealOdds();
+        }
+      }, 1000);
+    }
+
+    function revealOdds() {
+      const oddsEl = document.getElementById("odds");
+      const random = Math.random();
+      let odds = 0;
+
+      if (random < 0.2) {
+        odds = 0;
+      } else if (random > 0.8) {
+        odds = 100;
+      } else {
+        odds = Math.floor(random * 100);
+      }
+
+      oddsEl.textContent = `${odds}%`;
+      oddsEl.style.opacity = 1;
+      audioReveal.play();
+
+      setTimeout(() => {
+        document.getElementById("ask-btn").disabled = false;
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
